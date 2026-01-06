@@ -1,5 +1,6 @@
 import pyvista as pv
 import numpy as np
+import cmake_mlat
 import colorcet as cc
 from matplotlib import colors
 
