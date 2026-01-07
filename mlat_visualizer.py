@@ -7,9 +7,9 @@ from matplotlib import colors
 # if target point is constrained to 0 <= x <= 1, etc.
 references = np.array([
     [0.0, 0.0, 0.0],
-    [1.0, 0.0, 0.0],
-    [0.0, 1.0, 0.0],
-    [0.0, 0.0, 1.0],
+    [1.0, 0.0, 1.0],
+    [0.0, 1.0, 1.0],
+    [1.0, 1.0, 0.0],
 ], dtype=np.float64)
 
 true_point = np.array([0.5, 0.5, 0.5], dtype=np.float64)
@@ -37,10 +37,23 @@ def add_points(point, color, point_size, render_points_as_spheres):
         render_points_as_spheres = render_points_as_spheres
     )
 add_points(references, 'black', 20, True)
-add_points(true_point, 'blue', 20, True)
 
-for i in range(len(range_vectors)):
-    pl.add_arrows(references[i], range_vectors[i], mag=1.0)
+add_points(estimated_point, 'blue', 20, True)
+
+lines = []
+mesh = pv.MultiBlock(lines)
+line_color = 'red', 'blue', 'green', 'orange'
+
+for i in range(len(references)):
+    endpoint = references[i]+range_vectors[i]
+    line = pv.Line(references[i], endpoint)
+    midpoint = endpoint = references[i]+range_vectors[i]/2
+    label = pv.Label('S'+str(i+1), position=midpoint+0.03, size=30)
+    pl.add_actor(label)
+    label = pv.Label('P' + str(i + 1), position=references[i]+0.05, size=30)
+    pl.add_actor(label)
+    pl.add_mesh(line, color=line_color[i], line_width=3)
+
 
 #Final Setups
 pl.camera_position = [
