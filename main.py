@@ -1,3 +1,3 @@
 import cmake_mlat
 
-print(cmake_mlat.hello())
+print(cmake_mlat)
