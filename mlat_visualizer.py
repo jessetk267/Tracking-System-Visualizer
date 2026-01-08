@@ -8,9 +8,9 @@ from matplotlib import colors
 # if target point is constrained to 0 <= x <= 1, etc.
 references = np.array([
     [0.0, 0.0, 0.0],
-    [1.0, 0.0, 1.0],
-    [0.0, 1.0, 1.0],
-    [1.0, 1.0, 0.0],
+    [1.0, 0.0, 0.0],
+    [0.0, 1.0, 0.0],
+    [0.0, 0.0, 1.0],
 ], dtype=np.float64)
 
 true_point = np.array([0.2, 0.8, 0.5], dtype=np.float64)
@@ -42,9 +42,9 @@ add_points(references, 'black', 30, True)
 
 add_points(estimated_point, 'black', 30, True)
 
+
 lines = []
 mesh = pv.MultiBlock(lines)
-line_color = 'red', 'blue', 'green', 'orange'
 
 for i in range(len(references)):
     endpoint = references[i]+range_vectors[i]
@@ -54,7 +54,7 @@ for i in range(len(references)):
     pl.add_actor(label)
     label = pv.Label('P' + str(i + 1), position=references[i]+0.05, size=50)
     pl.add_actor(label)
-    pl.add_mesh(line, color=line_color[i], line_width=10, opacity=0.75)
+    pl.add_mesh(line, color='black', line_width=10, opacity=0.45)
 
 #Final Setups
 pl.camera_position = [
@@ -77,7 +77,7 @@ legend = (
     "   S2 = "+str(ranges[1])+"\n\n"
     "   S3 = "+str(ranges[2])+"\n\n"
     "   S4 = "+str(ranges[3])+"\n\n\n"
-    "   Estimated Point: "+str(estimated_point)+"\n\n\n"
+    "   Estimated Point (E): "+str(estimated_point)+"\n\n\n"
     "   Scalar Error: "+str(scalar_error)+"\n\n"
     "   Error Vector: "+"\n\n   "+str(vector_error)+"\n"
 )
