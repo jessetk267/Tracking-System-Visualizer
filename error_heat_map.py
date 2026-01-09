@@ -2,6 +2,7 @@ import pyvista as pv
 import numpy as np
 import colorcet as cc
 from matplotlib import colors
+import cmake_mlat
 
 class ErrorField:
     def __init__(self):
@@ -19,7 +20,7 @@ class ErrorField:
 
 field = ErrorField()
 ERROR_MIN = 0.0
-ERROR_MAX = 3
+ERROR_MAX = 1.0053497077208614e-15
 
 norm = colors.Normalize(vmin=ERROR_MIN, vmax=ERROR_MAX)
 cmap = cc.cm.fire
@@ -31,10 +32,6 @@ references = np.array([
     [1, 1, 0]
 ])
 
-true_point = np.array([0.5, 0.5, 0.5])
-estimated_point = np.array([0.5, 0.5, 0.0])
-
-
 pl = pv.Plotter()
 pl.show_grid()
 
@@ -45,18 +42,22 @@ def add_points(point, color, point_size, render_points_as_spheres):
         point_size = point_size,
         render_points_as_spheres = render_points_as_spheres
     )
-add_points(references, 'black', 20, True)
+add_points(references, 'black', 25, True)
 
 points = []
 errors = []
 
-#Temporary error visualization testing
-for i in range(10):
-    for j in range(10):
-        for k in range(10):
-            point = np.array([i/10, j/10, k/10])
-            error = (i+j+k)/10
-            field.add_sample(point, error)
+print("start")
+for i in range(6):
+    for j in range(6):
+        for k in range(6):
+            true_point = np.array([i/5, j/5, k/5], dtype=np.float64)
+            ranges = cmake_mlat.find_ranges(true_point, references)
+            estimated_point = cmake_mlat.find_point(references, ranges)
+            scalar_error = cmake_mlat.find_scalar_error(true_point, estimated_point)
+            field.add_sample(true_point, scalar_error)
+            print(scalar_error)
+print("end")
 
 
 cloud = field.to_polydata()
@@ -66,7 +67,7 @@ pl.add_mesh(
     scalars="error",
     cmap=cc.cm.fire_r,
     clim=(ERROR_MIN, ERROR_MAX),
-    point_size=15,
+    point_size=35,
     render_points_as_spheres= False
 )
 pl.remove_scalar_bar()
@@ -74,7 +75,7 @@ pl.remove_scalar_bar()
 scalar_bar = pl.add_scalar_bar(
     title="Scalar Error",
     vertical= True,
-    fmt="%.4f",
+    fmt="%.2e",
     n_labels=6
 )
 
